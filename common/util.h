@@ -8,6 +8,9 @@
 typedef uint8_t uint8;
 typedef uint16_t uint16;
 
+#define false 0
+#define true 1
+
 #define ANSI_RED     "\x1b[31m"
 #define ANSI_GREEN   "\x1b[32m"
 #define ANSI_YELLOW  "\x1b[33m"
