@@ -15,6 +15,6 @@ uint8 pop(struct CPU* state) {
 }
 
 uint16 pop16(struct CPU* state) {
-  return ((state->memory.raw[state->sp--]) << 8) | (state->memory.raw[state->sp--]);
+  return *(uint16*)(&state->memory.raw[state->sp--]);
 }
 
