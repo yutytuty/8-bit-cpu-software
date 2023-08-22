@@ -1,0 +1,47 @@
+=======================
+=        SPECS        =
+=======================
+
+* 8 bit architecture
+* 8 bit wide instructions with this format
+* 16 bit address memory
+
+=== INSTRUCTIONS ===
+0: MOV  reg, imm8/reg
+1: ADD  reg, imm8/reg
+2: SUB  reg, imm8/reg
+3: PUSH reg/imm(8/16)
+4: POP  reg
+5: LD   reg, [imm16/HMLM]
+6: ST   [imm16/HMLM], reg
+7: jnz   imm16/reg
+
+* instruction format:
+  XXXXYZZZ
+  - X (4 bit):  opcode
+  - Y (1 bit):  Y == 1 ? reg : imm8
+  - Z (3 bit):  data
+
+=== MACROS ===
+
+
+=== REGISTERS ===
+RA :  GP accumulator
+RB :  GP temporary
+RC :  GP counter
+RXH:  GP high memory index
+RHL:  GP low memory index
+M  :  Psudo-register of memory addressed by RXHRXL
+RF :  Flags
+        (LSB to MSB)
+        - SIGN
+        - ZERO
+        - CARRY
+
+=== MEMORY LAYOUT ===
+0x0000..0x7FFF: General Purpose ROM
+0xC)))..0xFDFF: General Purpose RAM
+0xFC00..0xFEFF: Stack
+0xFFFC..0xFFFD: Stack Pointer (SP)
+0xFFFE..0xFFFF: Program Counter (PC)
+
