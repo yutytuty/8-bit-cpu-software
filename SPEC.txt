@@ -40,7 +40,7 @@ RF :  Flags
 
 === MEMORY LAYOUT ===
 0x0000..0x7FFF: General Purpose ROM
-0xC)))..0xFDFF: General Purpose RAM
+0xC000..0xFDFF: General Purpose RAM
 0xFC00..0xFEFF: Stack
 0xFFFC..0xFFFD: Stack Pointer (SP)
 0xFFFE..0xFFFF: Program Counter (PC)
