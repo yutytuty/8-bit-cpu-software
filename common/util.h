@@ -18,7 +18,16 @@ typedef uint16_t uint16;
 
 static inline void warn(const char *fmt, ...) {
   va_list args;
-  printf("%s", ANSI_YELLOW);
+  printf("%sWARN:", ANSI_YELLOW);
+  va_start(args, fmt);
+  vprintf(fmt, args);
+  va_end(args);
+  printf("%s", ANSI_RESET);
+}
+
+static inline void error(const char *fmt, ...) {
+  va_list args;
+  printf("%sERROR: ", ANSI_RED);
   va_start(args, fmt);
   vprintf(fmt, args);
   va_end(args);
