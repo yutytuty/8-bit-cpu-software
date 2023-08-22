@@ -7,7 +7,8 @@ void push(struct CPU* state, uint8 value) {
 void push16(struct CPU* state, uint16 value) {
   uint8 low =  (value & 0xFF),
         high = (value >> 8) & 0xFF;
-  poke(state, ++state->sp, value);
+  poke(state, ++state->sp, low);
+  poke(state, ++state->sp, high);
 }
 
 uint8 pop(struct CPU* state) {
