@@ -12,7 +12,7 @@ EMU_EXEC := $(BIN_DIR)/emu
 
 COMMON_HEADERS = $(wildcard $(COMMON_DIR)/*.h)
 
-.PHONY: emu clean test
+.PHONY: emu clean
 
 emu: $(EMU_EXEC)
 
