@@ -114,7 +114,7 @@ static int run_instruction(struct CPU* state) {
       should_continue = false;
       break;
   }
-  state->pc += (inst != (JNZ && ZERO_FLAG(state->registers.rf))) ? instruction_length(inst, reg_bit) : 0;
+  state->pc += (inst != JNZ && !ZERO_FLAG(state->registers.rf)) ? instruction_length(inst, reg_bit) : 0;
   return should_continue;
 }
 
