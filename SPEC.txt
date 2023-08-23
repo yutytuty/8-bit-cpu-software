@@ -46,7 +46,7 @@ MOV, ADD, SUB:
   * Y=0: 2
   * Y=1: 1
 PUSH, POP:
-  * Y=0: 0
+  * Y=0: 2
   * Y=1: 0
 LOD, STO:
   * Y=0: 3
