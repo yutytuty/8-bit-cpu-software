@@ -22,7 +22,7 @@ static void load_image(struct CPU* state, FILE* image) {
 static int run_instruction(struct CPU* state) {
   // Run instruction and incrament PC accordingly
   uint8 byte_0 = state->memory.rom[state->pc];
-  enum Instruction inst = OPCODE(byte_0);
+  enum InstructionName inst = OPCODE(byte_0);
   int reg_bit = REG_BIT(byte_0);
   int should_continue;
   switch (inst) {

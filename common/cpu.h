@@ -20,7 +20,7 @@
 #define RAM_SIZE 0x3C00
 #define STCK_SIZE 0x300
 
-enum Instruction {
+enum InstructionName {
   MOV  = 0x0,
   ADD  = 0x1,
   SUB  = 0x2,
@@ -61,7 +61,7 @@ static inline void initialize_cpu(struct CPU* state) {
   state->pc = 0;
 }
 
-static inline size_t instruction_length(enum Instruction inst, int reg_bit) {
+static inline size_t instruction_length(enum InstructionName inst, int reg_bit) {
   switch (inst) {
     case MOV:
     case ADD:
