@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -I.
+CFLAGS = -Wall -Wextra -I. -g
 
 BIN_DIR = bin
 OBJ_DIR = obj
