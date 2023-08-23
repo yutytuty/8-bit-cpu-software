@@ -15,6 +15,7 @@
 5: LOD  reg, [imm8/RXHRXL]
 6: STO  [imm16/RXHRXL], reg
 7: JNZ imm16/reg
+F: HLT
 
 Instruction format:
 First byte is the same for all instructions
@@ -52,7 +53,9 @@ LOD, STO:
   * Y=1: 0 (Z bits unused as well)
 JNZ:
   * Y=0: 3
-  * Y=1:
+  * Y=1: 0
+
+HLT
 
 === REGISTERS ===
 (0) RA :  GP accumulator

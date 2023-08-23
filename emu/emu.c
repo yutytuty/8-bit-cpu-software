@@ -32,22 +32,19 @@ static int run_instruction(struct CPU* state) {
       int byte_1 = state->memory.rom[state->pc+1];
       if (REG_BIT(byte_0)) {
         // reg mov
-        puts("reg move");
-        printf("First reg: %d\nSecond reg: %d\n", FIRST_REG(byte_0), SECOND_REG(byte_1));
         state->registers.raw[FIRST_REG(byte_0)] = state->registers.raw[SECOND_REG(byte_1)];
       } else {
         // imm8 mov
-        puts("imm8 mov");
         state->registers.raw[FIRST_REG(byte_0)] = byte_1;
       }
       return true;
     }
     case HLT:
-      puts("Hit hlt");
+      puts("Got HLT instruction");
       return false;
     default:
       printf("instruction %1x ", inst);
-      puts("Hit default");
+      puts("hit default");
       return false;
   }
 }
