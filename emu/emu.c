@@ -3,11 +3,6 @@
 
 #include "emu.h"
 
-#define OPCODE(value) ((value >> 4) & 0xF)
-#define REG_BIT(value) ((value >> 3) & 1)
-#define SECOND_REG(value) (value >> 6)
-#define FIRST_REG(value) (value & 0x3)
-
 static void load_image(struct CPU* state, FILE* image) {
   // Determine file size
   fseek(image, 0, SEEK_END);

@@ -3,6 +3,12 @@
 
 #include "util.h"
 
+// Instruction parsing
+#define OPCODE(value) ((value >> 4) & 0xF)
+#define REG_BIT(value) ((value >> 3) & 1)
+#define SECOND_REG(value) (value >> 6)
+#define FIRST_REG(value) (value & 0x3)
+
 #define ROM_SIZE 0x8000
 #define RAM_SIZE 0x3C00
 #define STCK_SIZE 0x300
