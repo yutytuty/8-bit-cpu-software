@@ -17,9 +17,9 @@ COMMON_HEADERS = $(wildcard $(COMMON_DIR)/*.h)
 emu: $(EMU_EXEC)
 
 $(EMU_EXEC): $(EMU_OBJS) $(BIN_DIR)
-	$(CC) $(CFLAGS) -o $@ $<
+	$(CC) $(CFLAGS) -o $@ $(EMU_OBJS)
 
-$(EMU_OBJS): $(EMU_SRCS) $(OBJ_DIR) $(COMMON_HEADERS)
+$(OBJ_DIR)/%.o: $(EMU_DIR)/%.c $(OBJ_DIR) $(COMMON_HEADERS)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 $(OBJ_DIR):
