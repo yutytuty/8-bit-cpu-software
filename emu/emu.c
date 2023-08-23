@@ -20,37 +20,72 @@ static void load_image(struct CPU* state, FILE* image) {
 }
 
 static int run_instruction(struct CPU* state) {
+  // Run instruction and incrament PC accordingly
   uint8 byte_0 = state->memory.rom[state->pc];
   enum Instruction inst = OPCODE(byte_0);
+  int reg_bit = REG_BIT(byte_0);
+  int should_continue;
   switch (inst) {
     case MOV: {
       int byte_1 = state->memory.rom[state->pc+1];
-      if (REG_BIT(byte_0)) {
+      if (reg_bit) {
         // reg mov
         state->registers.raw[FIRST_REG(byte_0)] = state->registers.raw[SECOND_REG(byte_1)];
       } else {
         // imm8 mov
         state->registers.raw[FIRST_REG(byte_0)] = byte_1;
       }
-      return true;
+      should_continue = true;
+      break;
+    }
+    case ADD: {
+      uint8 byte_1 = state->memory.rom[state->pc+1];
+      if (reg_bit) {
+        // reg add
+        state->registers.raw[FIRST_REG(byte_0)] += state->registers.raw[SECOND_REG(byte_1)];
+      } else {
+        // imm8 add
+        state->registers.raw[FIRST_REG(byte_0)] += byte_1;
+      }
+      should_continue = true;
+      break;
+    }
+    case SUB: {
+      uint8 byte_1 = state->memory.rom[state->pc+1];
+      if (reg_bit) {
+        state->registers.raw[FIRST_REG(byte_0)] -= state->registers.raw[SECOND_REG(byte_1)];
+      } else {
+        state->registers.raw[FIRST_REG(byte_0)] -= byte_1;
+      }
+      should_continue = true;
+      break;
+    }
+    case PUSH: {
+      if (reg_bit) {
+        push(state, state->registers.raw[FIRST_REG(byte_0)]);
+      } else {
+        push(state, state->memory.rom[state->pc+1]);
+      }
+      should_continue = true;
+      break;
     }
     case HLT:
-      puts("Got HLT instruction");
-      return false;
+      puts("Got HLT");
+      should_continue = false;
+      break;
     default:
-      printf("instruction %1x ", inst);
-      puts("hit default");
-      return false;
+      printf("Unknown instruction %1x\n", inst);
+      should_continue = false;
+      break;
   }
+  state->pc += instruction_length(inst, reg_bit);
+  return should_continue;
 }
 
 static void run(struct CPU* state) {
   printf("Running program\n");
   // Fetch execute cycle
-  while (run_instruction(state)) {
-    // TODO make this dependent on the previous instruction
-    state->pc += 2;
-  }
+  while (run_instruction(state));
   puts("================");
   printf("Registers: %02x %02x %02x %02x %02x %02x\n", state->registers.ra, state->registers.rb, state->registers.rc, state->registers.rxh, state->registers.rxl, state->registers.rf);
 }

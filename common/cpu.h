@@ -3,6 +3,9 @@
 
 #include "util.h"
 
+// TODO in design document, fill whole memory
+#define TOTAL_MEMORY_SIZE ROM_SIZE+RAM_SIZE+STCK_SIZE
+
 // Instruction parsing
 #define OPCODE(value) ((value >> 4) & 0xF)
 #define REG_BIT(value) ((value >> 3) & 1)
@@ -12,9 +15,6 @@
 #define ROM_SIZE 0x8000
 #define RAM_SIZE 0x3C00
 #define STCK_SIZE 0x300
-
-// TODO in design document, fill whole memory
-#define TOTAL_MEMORY_SIZE ROM_SIZE+RAM_SIZE+STCK_SIZE
 
 enum Instruction {
   MOV  = 0x0,
@@ -49,8 +49,26 @@ struct CPU {
   uint16_t pc;
 };
 
-static void inline initialize_cpu(struct CPU* state) {
+static inline void initialize_cpu(struct CPU* state) {
   state->pc = 0;
+}
+
+static inline size_t instruction_length(enum Instruction inst, int reg_bit) {
+  switch (inst) {
+    case MOV:
+    case ADD:
+    case SUB:
+      return 2;
+    case PUSH:
+    case POP:
+      return (reg_bit) ? 1 : 2;
+    case LOD:
+    case STO:
+    case JNZ:
+      return (reg_bit) ? 1 : 3;
+    case HLT:
+      return 0;
+  }
 }
 
 

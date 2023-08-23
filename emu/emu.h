@@ -3,6 +3,7 @@
 
 #include "../common/util.h"
 #include "../common/cpu.h"
+#include "libemu.h"
 
 #endif
 
