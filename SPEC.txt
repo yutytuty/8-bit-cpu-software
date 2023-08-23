@@ -6,37 +6,65 @@
 * 8 bit wide instructions with this format
 * 16 bit address memory
 
-=== INSTRUCTIONS ===
+=== INSTRUCTION SET ===
 0: MOV  reg, imm8/reg
 1: ADD  reg, imm8/reg
 2: SUB  reg, imm8/reg
-3: PUSH reg/imm(8/16)
+3: PUSH reg/imm8
 4: POP  reg
-5: LD   reg, [imm16/HMLM]
-6: ST   [imm16/HMLM], reg
-7: jnz   imm16/reg
+5: LOD  reg, [imm8/RXHRXL]
+6: STO  [imm16/RXHRXL], reg
+7: JNZ imm16/reg
 
-* instruction format:
-  XXXXYZZZ
-  - X (4 bit):  opcode
-  - Y (1 bit):  Y == 1 ? reg : imm8
-  - Z (3 bit):  data
+Instruction format:
+First byte is the same for all instructions
+Format: XXXXYZZZ
+X: 4 bit opcode
+Y: Y=0 for imm8 or Y=1 for reg
+Z: 3 bit identifier of first register
 
-=== MACROS ===
+Instructions can be 1-3 bytes long
 
+Instruction specific continuation formats (second/third byte):
+0:
+1: AAAUUUUU
+2: BBBBBBBB
+3: CCCCCCCCCCCCCCCC
+
+Format 0:
+  * No second bit. Relevent to PUSH, POP, LOD, STO, JNZ.
+Format 1:
+  * A: 3 bit register identifier
+  * U: UNUSED
+Format 2:
+  * B: 8 bit immediate
+Format 3:
+  * C: 16 bit immediate
+
+MOV, ADD, SUB:
+  * Y=0: 2
+  * Y=1: 1
+PUSH, POP:
+  * Y=0: 0
+  * Y=1: 0
+LOD, STO:
+  * Y=0: 3
+  * Y=1: 0 (Z bits unused as well)
+JNZ:
+  * Y=0: 3
+  * Y=1:
 
 === REGISTERS ===
-RA :  GP accumulator
-RB :  GP temporary
-RC :  GP counter
-RXH:  GP high memory index
-RHL:  GP low memory index
-M  :  Psudo-register of memory addressed by RXHRXL
-RF :  Flags
-        (LSB to MSB)
-        - SIGN
-        - ZERO
-        - CARRY
+(0) RA :  GP accumulator
+(1) RB :  GP temporary
+(2) RC :  GP counter
+(3) RXH:  GP high memory index
+(4) RHL:  GP low memory index
+(5) RF :  Flags
+            (LSB to MSB)
+            * SIGN
+            * ZERO
+            * CARRY
 
 === MEMORY LAYOUT ===
 0x0000..0x7FFF: General Purpose ROM
