@@ -69,6 +69,42 @@ static int run_instruction(struct CPU* state) {
       should_continue = true;
       break;
     }
+    case POP: {
+      if (reg_bit) {
+        state->registers.raw[FIRST_REG(byte_0)] = pop(state);
+      } else {
+        pop(state);
+      }
+      should_continue = true;
+      break;
+    }
+    case LOD: {
+      if (reg_bit) {
+        state->registers.raw[FIRST_REG(byte_0)] = peek(state, rxhrxl(*state));
+      } else {
+        state->registers.raw[FIRST_REG(byte_0)] = peek16(state, state->pc+1);
+      }
+      should_continue = true;
+      break;
+    }
+    case STO:
+      if (reg_bit) {
+        poke(state, rxhrxl(*state), state->registers.raw[FIRST_REG(byte_0)]);
+      } else {
+        poke(state, peek16(state, state->pc), state->registers.raw[FIRST_REG(byte_0)]);
+      }
+      should_continue = true;
+      break;
+    case JNZ:
+      if (ZERO_FLAG(state->registers.rf)) {
+        if (reg_bit) {
+          state->pc = state->registers.raw[FIRST_REG(byte_0)];
+        } else {
+          state->pc = peek16(state, state->pc+1);
+        }
+      }
+      should_continue = true;
+      break;
     case HLT:
       puts("Got HLT");
       should_continue = false;
@@ -78,7 +114,7 @@ static int run_instruction(struct CPU* state) {
       should_continue = false;
       break;
   }
-  state->pc += instruction_length(inst, reg_bit);
+  state->pc += (inst != (JNZ && ZERO_FLAG(state->registers.rf))) ? instruction_length(inst, reg_bit) : 0;
   return should_continue;
 }
 
