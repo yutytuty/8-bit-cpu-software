@@ -1,4 +1,4 @@
-C = gcc
+CC = gcc
 CFLAGS = -Wall -Wextra -I.
 
 BIN_DIR = bin
