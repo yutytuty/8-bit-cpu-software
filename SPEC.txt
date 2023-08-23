@@ -65,7 +65,6 @@ HLT
 (4) RHL:  GP low memory index
 (5) RF :  Flags
             (LSB to MSB)
-            * SIGN
             * ZERO
             * CARRY
 
