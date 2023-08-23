@@ -3,6 +3,11 @@
 
 #include "emu.h"
 
+#define OPCODE(value) ((value >> 4) & 0xF)
+#define REG_BIT(value) ((value >> 3) & 1)
+#define SECOND_REG(value) (value >> 6)
+#define FIRST_REG(value) (value & 0x3)
+
 static void load_image(struct CPU* state, FILE* image) {
   // Determine file size
   fseek(image, 0, SEEK_END);
@@ -14,10 +19,53 @@ static void load_image(struct CPU* state, FILE* image) {
   }
   // Read the file into rom
   unsigned long bytes_read = fread(state->memory.rom, 1, image_size, image);
+  if (!bytes_read) {
+    error("Could not read file\n");
+  }
+}
+
+static int run_instruction(struct CPU* state) {
+  uint8 byte_0 = state->memory.rom[state->pc];
+  enum Instruction inst = OPCODE(byte_0);
+  switch (inst) {
+    case MOV: {
+      int byte_1 = state->memory.rom[state->pc+1];
+      if (REG_BIT(byte_0)) {
+        // reg mov
+        puts("reg move");
+        printf("First reg: %d\nSecond reg: %d\n", FIRST_REG(byte_0), SECOND_REG(byte_1));
+        state->registers.raw[FIRST_REG(byte_0)] = state->registers.raw[SECOND_REG(byte_1)];
+      } else {
+        // imm8 mov
+        puts("imm8 mov");
+        state->registers.raw[FIRST_REG(byte_0)] = byte_1;
+      }
+      return true;
+    }
+    case HLT:
+      puts("Hit hlt");
+      return false;
+    default:
+      printf("instruction %1x ", inst);
+      puts("Hit default");
+      return false;
+  }
+}
+
+static void run(struct CPU* state) {
+  printf("Running program\n");
+  // Fetch execute cycle
+  while (run_instruction(state)) {
+    // TODO make this dependent on the previous instruction
+    state->pc += 2;
+  }
+  puts("================");
+  printf("Registers: %02x %02x %02x %02x %02x %02x\n", state->registers.ra, state->registers.rb, state->registers.rc, state->registers.rxh, state->registers.rxl, state->registers.rf);
 }
 
 int main(int argc, char *argv[]) {
   struct CPU state;
+  initialize_cpu(&state);
 
   if (argc != 2) {
     printf("Usage: %s <image file>\n", argv[0]);
@@ -32,6 +80,16 @@ int main(int argc, char *argv[]) {
     return EXIT_FAILURE;
   }
   load_image(&state, image);
+
+  printf("=== IMAGE ===\n");
+  for (int i = 0; i < 5; ++i) {
+    printf("%02x ", state.memory.rom[i]);
+  }
+  printf("\n=============\n");
+
+  printf("Loaded program into memory\n");
+
+  run(&state);
 
   return EXIT_SUCCESS;
 }
