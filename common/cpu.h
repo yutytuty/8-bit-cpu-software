@@ -12,6 +12,10 @@
 #define SECOND_REG(value) (value >> 6)
 #define FIRST_REG(value) (value & 0x3)
 
+// Get flags
+#define ZERO_FLAG(flag_reg) (flag_reg & 0x1)
+#define CARRY_FLAG(flag_reg) ((flag_reg >> 1) & 0x1)
+
 #define ROM_SIZE 0x8000
 #define RAM_SIZE 0x3C00
 #define STCK_SIZE 0x300
@@ -48,6 +52,10 @@ struct CPU {
   uint16_t sp;
   uint16_t pc;
 };
+
+static inline uint16 rxhrxl(struct CPU state) {
+  return ((state.registers.rxh << 8) | state.registers.rxl);
+}
 
 static inline void initialize_cpu(struct CPU* state) {
   state->pc = 0;
@@ -90,6 +98,14 @@ static inline uint8 peek(struct CPU* state, uint16 addr) {
     return 0x0;
   }
   return state->memory.raw[addr];
+}
+
+static inline uint16 peek16(struct CPU* state, uint16 addr) {
+  if (addr > TOTAL_MEMORY_SIZE - 1) {
+    warn("Attempted accessing out of bounds memory: %04x\n", addr);
+    return 0x0;
+  }
+  return *(uint16*)(&state->memory.raw[addr]);
 }
 
 #endif
