@@ -12,8 +12,8 @@
 2: SUB  reg, imm8/reg
 3: PUSH reg/imm8
 4: POP  reg
-5: LOD  reg, [imm8/RXHRXL]
-6: STO  [imm16/RXHRXL], reg
+5: LOD  reg, [imm8/RHRL]
+6: STO  [imm16/RHRL], reg
 7: JNZ imm16/reg
 F: HLT
 
@@ -61,7 +61,7 @@ HLT
 (0) RA :  GP accumulator
 (1) RB :  GP temporary
 (2) RC :  GP counter
-(3) RXH:  GP high memory index
+(3) RH:  GP high memory index
 (4) RHL:  GP low memory index
 (5) RF :  Flags
             (LSB to MSB)
@@ -74,4 +74,3 @@ HLT
 0xFC00..0xFEFF: Stack
 0xFFFC..0xFFFD: Stack Pointer (SP)
 0xFFFE..0xFFFF: Program Counter (PC)
-
