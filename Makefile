@@ -19,6 +19,8 @@ COMMON_HEADERS = $(wildcard $(COMMON_DIR)/*.h)
 
 .PHONY: emu asm clean
 
+all: emu asm
+
 emu: $(EMU_EXEC)
 
 asm: $(ASM_EXEC)
