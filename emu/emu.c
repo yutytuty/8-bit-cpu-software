@@ -26,7 +26,7 @@ static int run_instruction(struct CPU* state) {
   int reg_bit = REG_BIT(byte_0);
   int should_continue;
   switch (inst) {
-    case MOV: {
+    case I_MOV: {
       int byte_1 = state->memory.rom[state->pc+1];
       if (reg_bit) {
         // reg mov
@@ -38,7 +38,7 @@ static int run_instruction(struct CPU* state) {
       should_continue = true;
       break;
     }
-    case ADD: {
+    case I_ADD: {
       uint8 byte_1 = state->memory.rom[state->pc+1];
       if (reg_bit) {
         // reg add
@@ -50,7 +50,7 @@ static int run_instruction(struct CPU* state) {
       should_continue = true;
       break;
     }
-    case SUB: {
+    case I_SUB: {
       uint8 byte_1 = state->memory.rom[state->pc+1];
       if (reg_bit) {
         state->registers.raw[FIRST_REG(byte_0)] -= state->registers.raw[SECOND_REG(byte_1)];
@@ -60,7 +60,7 @@ static int run_instruction(struct CPU* state) {
       should_continue = true;
       break;
     }
-    case PUSH: {
+    case I_PUSH: {
       if (reg_bit) {
         push(state, state->registers.raw[FIRST_REG(byte_0)]);
       } else {
@@ -69,7 +69,7 @@ static int run_instruction(struct CPU* state) {
       should_continue = true;
       break;
     }
-    case POP: {
+    case I_POP: {
       if (reg_bit) {
         state->registers.raw[FIRST_REG(byte_0)] = pop(state);
       } else {
@@ -78,24 +78,24 @@ static int run_instruction(struct CPU* state) {
       should_continue = true;
       break;
     }
-    case LOD: {
+    case I_LOD: {
       if (reg_bit) {
-        state->registers.raw[FIRST_REG(byte_0)] = peek(state, rxhrxl(*state));
+        state->registers.raw[FIRST_REG(byte_0)] = peek(state, rhrl(*state));
       } else {
         state->registers.raw[FIRST_REG(byte_0)] = peek16(state, state->pc+1);
       }
       should_continue = true;
       break;
     }
-    case STO:
+    case I_STO:
       if (reg_bit) {
-        poke(state, rxhrxl(*state), state->registers.raw[FIRST_REG(byte_0)]);
+        poke(state, rhrl(*state), state->registers.raw[FIRST_REG(byte_0)]);
       } else {
         poke(state, peek16(state, state->pc), state->registers.raw[FIRST_REG(byte_0)]);
       }
       should_continue = true;
       break;
-    case JNZ:
+    case I_JNZ:
       if (ZERO_FLAG(state->registers.rf)) {
         if (reg_bit) {
           state->pc = state->registers.raw[FIRST_REG(byte_0)];
@@ -105,7 +105,7 @@ static int run_instruction(struct CPU* state) {
       }
       should_continue = true;
       break;
-    case HLT:
+    case I_HLT:
       puts("Got HLT");
       should_continue = false;
       break;
@@ -114,7 +114,7 @@ static int run_instruction(struct CPU* state) {
       should_continue = false;
       break;
   }
-  state->pc += (inst != JNZ && !ZERO_FLAG(state->registers.rf)) ? instruction_length(inst, reg_bit) : 0;
+  state->pc += (inst != I_JNZ && !ZERO_FLAG(state->registers.rf)) ? instruction_length(inst, reg_bit) : 0;
   return should_continue;
 }
 
@@ -123,7 +123,7 @@ static void run(struct CPU* state) {
   // Fetch execute cycle
   while (run_instruction(state));
   puts("================");
-  printf("Registers: %02x %02x %02x %02x %02x %02x\n", state->registers.ra, state->registers.rb, state->registers.rc, state->registers.rxh, state->registers.rxl, state->registers.rf);
+  printf("Registers: %02x %02x %02x %02x %02x %02x\n", state->registers.ra, state->registers.rb, state->registers.rc, state->registers.rh, state->registers.rl, state->registers.rf);
 }
 
 int main(int argc, char *argv[]) {

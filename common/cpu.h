@@ -20,22 +20,31 @@
 #define RAM_SIZE 0x3C00
 #define STCK_SIZE 0x300
 
-enum Instruction {
-  MOV  = 0x0,
-  ADD  = 0x1,
-  SUB  = 0x2,
-  PUSH = 0x3,
-  POP  = 0x4,
-  LOD  = 0x5,
-  STO  = 0x6,
-  JNZ  = 0x7,
-  HLT  = 0xF,
+enum Instruction : uint8 {
+  I_MOV  = 0x0,
+  I_ADD  = 0x1,
+  I_SUB  = 0x2,
+  I_PUSH = 0x3,
+  I_POP  = 0x4,
+  I_LOD  = 0x5,
+  I_STO  = 0x6,
+  I_JNZ  = 0x7,
+  I_HLT  = 0xF,
+};
+
+enum Register : uint8 {
+  R_RA = 0x0,
+  R_RB = 0x1,
+  R_RC = 0x2,
+  R_RH = 0x3,
+  R_RL = 0x4,
+  R_RF = 0x5,
 };
 
 struct CPU {
   union {
     struct {
-      uint8 ra, rb, rc, rxh, rxl, rf;
+      uint8 ra, rb, rc, rh, rl, rf;
     };
     uint8 raw[6];
   } registers;
@@ -53,8 +62,8 @@ struct CPU {
   uint16_t pc;
 };
 
-static inline uint16 rxhrxl(struct CPU state) {
-  return ((state.registers.rxh << 8) | state.registers.rxl);
+static inline uint16 rhrl(struct CPU state) {
+  return ((state.registers.rh << 8) | state.registers.rl);
 }
 
 static inline void initialize_cpu(struct CPU* state) {
@@ -63,18 +72,18 @@ static inline void initialize_cpu(struct CPU* state) {
 
 static inline size_t instruction_length(enum Instruction inst, int reg_bit) {
   switch (inst) {
-    case MOV:
-    case ADD:
-    case SUB:
+    case I_MOV:
+    case I_ADD:
+    case I_SUB:
       return 2;
-    case PUSH:
-    case POP:
+    case I_PUSH:
+    case I_POP:
       return (reg_bit) ? 1 : 2;
-    case LOD:
-    case STO:
-    case JNZ:
+    case I_LOD:
+    case I_STO:
+    case I_JNZ:
       return (reg_bit) ? 1 : 3;
-    case HLT:
+    case I_HLT:
       return 0;
   }
 }
@@ -109,4 +118,3 @@ static inline uint16 peek16(struct CPU* state, uint16 addr) {
 }
 
 #endif
-
