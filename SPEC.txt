@@ -12,8 +12,8 @@
 2: SUB  reg, imm8/reg
 3: PUSH reg/imm8
 4: POP  reg
-5: LOD  reg, [imm8/RHRL]
-6: STO  [imm16/RHRL], reg
+5: LOD  reg, [imm16/RHRL]
+6: STO  reg, [imm16/RHRL]
 7: JNZ imm16/reg
 F: HLT
 
