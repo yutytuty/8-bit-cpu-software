@@ -4,7 +4,7 @@
 #include "util.h"
 
 // TODO in design document, fill whole memory
-#define TOTAL_MEMORY_SIZE ROM_SIZE+RAM_SIZE+STCK_SIZE
+#define TOTAL_MEMORY_SIZE ROM_SIZE + RAM_SIZE + STCK_SIZE
 
 // Instruction parsing
 #define OPCODE(value) ((value >> 4) & 0xF)
@@ -20,19 +20,19 @@
 #define RAM_SIZE 0x3C00
 #define STCK_SIZE 0x300
 
-enum Instruction : uint8 {
-  I_MOV  = 0x0,
-  I_ADD  = 0x1,
-  I_SUB  = 0x2,
+enum Instruction {
+  I_MOV = 0x0,
+  I_ADD = 0x1,
+  I_SUB = 0x2,
   I_PUSH = 0x3,
-  I_POP  = 0x4,
-  I_LOD  = 0x5,
-  I_STO  = 0x6,
-  I_JNZ  = 0x7,
-  I_HLT  = 0xF,
+  I_POP = 0x4,
+  I_LOD = 0x5,
+  I_STO = 0x6,
+  I_JNZ = 0x7,
+  I_HLT = 0xF,
 };
 
-enum Register : uint8 {
+enum Register {
   R_RA = 0x0,
   R_RB = 0x1,
   R_RC = 0x2,
@@ -66,9 +66,7 @@ static inline uint16 rhrl(struct CPU state) {
   return ((state.registers.rh << 8) | state.registers.rl);
 }
 
-static inline void initialize_cpu(struct CPU* state) {
-  state->pc = 0;
-}
+static inline void initialize_cpu(struct CPU* state) { state->pc = 0; }
 
 static inline size_t instruction_length(enum Instruction inst, int reg_bit) {
   switch (inst) {
@@ -87,7 +85,6 @@ static inline size_t instruction_length(enum Instruction inst, int reg_bit) {
       return 0;
   }
 }
-
 
 static inline void poke(struct CPU* state, uint16 addr, uint8 value) {
   if (addr > TOTAL_MEMORY_SIZE) {

@@ -1,7 +1,7 @@
+#include "emu.h"
+
 #include <stdio.h>
 #include <stdlib.h>
-
-#include "emu.h"
 
 static void load_image(struct CPU* state, FILE* image) {
   // Determine file size
@@ -9,7 +9,8 @@ static void load_image(struct CPU* state, FILE* image) {
   long image_size = ftell(image);
   fseek(image, 0, SEEK_SET);
   if (image_size > ROM_SIZE) {
-    warn("Image to large for ROM. last %d bytes not loaded.", image_size - ROM_SIZE);
+    warn("Image to large for ROM. last %d bytes not loaded.",
+         image_size - ROM_SIZE);
     image_size = ROM_SIZE;
   }
   // Read the file into rom
@@ -27,10 +28,11 @@ static int run_instruction(struct CPU* state) {
   int should_continue;
   switch (inst) {
     case I_MOV: {
-      int byte_1 = state->memory.rom[state->pc+1];
+      int byte_1 = state->memory.rom[state->pc + 1];
       if (reg_bit) {
         // reg mov
-        state->registers.raw[FIRST_REG(byte_0)] = state->registers.raw[SECOND_REG(byte_1)];
+        state->registers.raw[FIRST_REG(byte_0)] =
+            state->registers.raw[SECOND_REG(byte_1)];
       } else {
         // imm8 mov
         state->registers.raw[FIRST_REG(byte_0)] = byte_1;
@@ -39,10 +41,11 @@ static int run_instruction(struct CPU* state) {
       break;
     }
     case I_ADD: {
-      uint8 byte_1 = state->memory.rom[state->pc+1];
+      uint8 byte_1 = state->memory.rom[state->pc + 1];
       if (reg_bit) {
         // reg add
-        state->registers.raw[FIRST_REG(byte_0)] += state->registers.raw[SECOND_REG(byte_1)];
+        state->registers.raw[FIRST_REG(byte_0)] +=
+            state->registers.raw[SECOND_REG(byte_1)];
       } else {
         // imm8 add
         state->registers.raw[FIRST_REG(byte_0)] += byte_1;
@@ -51,9 +54,10 @@ static int run_instruction(struct CPU* state) {
       break;
     }
     case I_SUB: {
-      uint8 byte_1 = state->memory.rom[state->pc+1];
+      uint8 byte_1 = state->memory.rom[state->pc + 1];
       if (reg_bit) {
-        state->registers.raw[FIRST_REG(byte_0)] -= state->registers.raw[SECOND_REG(byte_1)];
+        state->registers.raw[FIRST_REG(byte_0)] -=
+            state->registers.raw[SECOND_REG(byte_1)];
       } else {
         state->registers.raw[FIRST_REG(byte_0)] -= byte_1;
       }
@@ -64,7 +68,7 @@ static int run_instruction(struct CPU* state) {
       if (reg_bit) {
         push(state, state->registers.raw[FIRST_REG(byte_0)]);
       } else {
-        push(state, state->memory.rom[state->pc+1]);
+        push(state, state->memory.rom[state->pc + 1]);
       }
       should_continue = true;
       break;
@@ -82,7 +86,7 @@ static int run_instruction(struct CPU* state) {
       if (reg_bit) {
         state->registers.raw[FIRST_REG(byte_0)] = peek(state, rhrl(*state));
       } else {
-        state->registers.raw[FIRST_REG(byte_0)] = peek16(state, state->pc+1);
+        state->registers.raw[FIRST_REG(byte_0)] = peek16(state, state->pc + 1);
       }
       should_continue = true;
       break;
@@ -91,7 +95,8 @@ static int run_instruction(struct CPU* state) {
       if (reg_bit) {
         poke(state, rhrl(*state), state->registers.raw[FIRST_REG(byte_0)]);
       } else {
-        poke(state, peek16(state, state->pc), state->registers.raw[FIRST_REG(byte_0)]);
+        poke(state, peek16(state, state->pc),
+             state->registers.raw[FIRST_REG(byte_0)]);
       }
       should_continue = true;
       break;
@@ -100,7 +105,7 @@ static int run_instruction(struct CPU* state) {
         if (reg_bit) {
           state->pc = state->registers.raw[FIRST_REG(byte_0)];
         } else {
-          state->pc = peek16(state, state->pc+1);
+          state->pc = peek16(state, state->pc + 1);
         }
       }
       should_continue = true;
@@ -114,19 +119,24 @@ static int run_instruction(struct CPU* state) {
       should_continue = false;
       break;
   }
-  state->pc += (inst != I_JNZ && !ZERO_FLAG(state->registers.rf)) ? instruction_length(inst, reg_bit) : 0;
+  state->pc += (inst != I_JNZ && !ZERO_FLAG(state->registers.rf))
+                   ? instruction_length(inst, reg_bit)
+                   : 0;
   return should_continue;
 }
 
 static void run(struct CPU* state) {
   printf("Running program\n");
   // Fetch execute cycle
-  while (run_instruction(state));
+  while (run_instruction(state))
+    ;
   puts("================");
-  printf("Registers: %02x %02x %02x %02x %02x %02x\n", state->registers.ra, state->registers.rb, state->registers.rc, state->registers.rh, state->registers.rl, state->registers.rf);
+  printf("Registers: %02x %02x %02x %02x %02x %02x\n", state->registers.ra,
+         state->registers.rb, state->registers.rc, state->registers.rh,
+         state->registers.rl, state->registers.rf);
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
   struct CPU state;
   initialize_cpu(&state);
 
