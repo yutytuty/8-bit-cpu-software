@@ -17,10 +17,6 @@ enum Instruction getLineInstruction(struct LineParser *ctx) {
 }
 
 enum Register parseRegister(struct LineParser *ctx) {
-  // char register_str[3];
-  // strncpy(register_str, ctx->line, 2);
-  // register_str[2] = '\0';
-  // return strToRegister(register_str);
   ctx->line[2] = '\0';
   const char* base_ptr = ctx->line;
   while (*ctx->line++ != '\0');
@@ -149,4 +145,19 @@ uint16 evaluateExpression16(struct LineParser *ctx) {
   }
   *ctx->line = '\0';
   return atoi(expression_base_ptr);
+}
+
+void parseLine(struct LineParser *ctx) {
+  enum Instruction inst = getLineInstruction(ctx);
+  if (inst == I_HLT) {
+    info("Parsed HLT\n");
+    return;
+  }
+  parseFirstParam(ctx);
+  if (inst == I_PUSH || inst == I_POP || inst == I_JNZ) {
+    info("Parsed one param instruction\n");
+    return;
+  }
+  info("Parsed two param instruction\n");
+  parseSecondParam(ctx);
 }

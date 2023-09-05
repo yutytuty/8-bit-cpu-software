@@ -7,8 +7,11 @@
 #include "../common/util.h"
 #include "lex.h"
 
-struct Asseembler {
+#define BYTECODE_BLOCK_SIZE 8
+
+struct Assembler {
   FILE *fd;
+  uint8* lables;
 };
 
 #endif

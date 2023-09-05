@@ -169,4 +169,6 @@ uint8 evaluateExpression(struct LineParser *ctx);
 
 uint16 evaluateExpression16(struct LineParser *ctx);
 
+void parseLine(struct LineParser *ctx);
+
 #endif

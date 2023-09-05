@@ -37,4 +37,13 @@ static inline void error(const char *fmt, ...) {
   printf("%s", ANSI_RESET);
 }
 
+static inline void info(const char *fmt, ...) {
+  va_list args;
+  printf("%sINFO: ", ANSI_BLUE);
+  va_start(args, fmt);
+  vprintf(fmt, args);
+  va_end(args);
+  printf("%s", ANSI_RESET);
+}
+
 #endif

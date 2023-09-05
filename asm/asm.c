@@ -1,13 +1,13 @@
 #include "asm.h"
 
-size_t goToStart(FILE* fd) {
+size_t goToStart(FILE* cursor) {
   int line_number = 0;
 
   char* line = NULL;
   size_t len = 0;
   // read line
   do {
-    getline(&line, &len, fd);
+    getline(&line, &len, cursor);
     line_number++;
     if (line == NULL) {
       error("Read error at line %d\n", line_number);
@@ -36,10 +36,8 @@ void parseLines(FILE* fd, size_t start_line) {
     }
 
     printf("Parsing line number %d\n", line_number);
-    enum Instruction inst = getLineInstruction(&ctx);
-    printf("Instruction: %02x\n", inst);
-
-    // free(ctx.line); // Free allocated memory for line
+    parseLine(&ctx);
+    printf("Instruction: %02x\n", ctx.inst);
   }
 
   if (feof(fd)) {
@@ -56,25 +54,18 @@ int main(int argc, const char *argv[]) {
     printf("Usage: %s <source>", argv[0]);
     return 1;
   }
-  FILE *fd = fopen(argv[1], "r");
-  if (fd == NULL) {
+  FILE *cursor = fopen(argv[1], "r");
+  if (cursor == NULL) {
     error("Could not open fd %s\n", argv[1]);
     return EXIT_FAILURE;
   }
 
-  size_t line_number = goToStart(fd);
+  size_t line_number = goToStart(cursor);
 
-  parseLines(fd, line_number);
-
+  parseLines(cursor, line_number);
   
-  // enum Instruction inst = getLineInstruction(&ctx);
-  // printf("Instruction: %02x\n", inst);
-  // parseFirstParam(&ctx);
-  // printf("Register: %02x\n", ctx.params.first_reg);
-  // parseSecondParam(&ctx);
-  // printf("Constant: %02x\n", ctx.params.reg_.imm8.second);
-
-  fclose(fd);
+  fclose(cursor);
 
   return EXIT_SUCCESS;
 }
+
