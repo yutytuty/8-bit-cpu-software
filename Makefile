@@ -1,5 +1,5 @@
 CC = clang++
-CFLAGS = -Wall -Wextra -I. -g
+CFLAGS = -Wall -Wextra -I. -g -std=c++11
 
 BIN_DIR = bin
 OBJ_DIR = obj
