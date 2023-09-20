@@ -31,10 +31,10 @@ $(EMU_EXEC): $(EMU_OBJS) $(BIN_DIR)
 $(ASM_EXEC): $(ASM_OBJS) $(BIN_DIR)
 	$(CC) $(CFALGS) -o $@ $(ASM_OBJS)
 
-$(OBJ_DIR)/%.o: $(EMU_DIR)/%.c $(OBJ_DIR) $(COMMON_HEADERS)
+$(OBJ_DIR)/%.o: $(EMU_DIR)/%.cpp $(OBJ_DIR) $(COMMON_HEADERS)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-$(OBJ_DIR)/%.o: $(ASM_DIR)/%.c $(OBJ_DIR) $(COMMON_HEADERS)
+$(OBJ_DIR)/%.o: $(ASM_DIR)/%.cpp $(OBJ_DIR) $(COMMON_HEADERS)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 
