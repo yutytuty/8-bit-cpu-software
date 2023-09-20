@@ -6,13 +6,13 @@ OBJ_DIR = obj
 COMMON_DIR = common
 
 EMU_DIR = emu
-EMU_SRCS = $(wildcard $(EMU_DIR)/*.c)
+EMU_SRCS = $(wildcard $(EMU_DIR)/*.cpp)
 EMU_OBJS = $(patsubst $(EMU_DIR)/%.c,$(OBJ_DIR)/%.o,$(EMU_SRCS))
 EMU_EXEC := $(BIN_DIR)/emu
 
 ASM_DIR = asm
-ASM_SRCS = $(wildcard $(ASM_DIR)/*.c)
-ASM_OBJS = $(patsubst $(ASM_DIR)/%.c,$(OBJ_DIR)/%.o,$(ASM_SRCS))
+ASM_SRCS = $(wildcard $(ASM_DIR)/*.cpp)
+ASM_OBJS = $(patsubst $(ASM_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(ASM_SRCS))
 ASM_EXEC := $(BIN_DIR)/asm
 
 COMMON_HEADERS = $(wildcard $(COMMON_DIR)/*.h)
