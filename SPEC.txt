@@ -7,22 +7,22 @@
 * 16-bit address memory
 
 === INSTRUCTION SET ===
-0: MOV  reg, imm8/reg
-1: ADD  reg, imm8/reg
-2: SUB  reg, imm8/reg
-3: PUSH reg/imm8
-4: POP  reg
-5: LOD  reg, [imm16/RHRL]
-6: STO  reg, [imm16/RHRL]
-7: JNZ imm16/reg
-F: HLT
+0x0: MOV  reg, imm8/reg
+0x1: ADD  reg, imm8/reg
+0x2: SUB  reg, imm8/reg
+0x3: PUSH reg/imm8
+0x4: POP  reg
+0x5: LOD  reg, [imm16/RHRL]
+0x6: STO  reg, [imm16/RHRL]
+0x7: JNZ imm16/reg
+0xF: HLT
 
 Instruction format:
 First byte is the same for all instructions
 Format: XXXXYZZZ
-X: 4 bit opcode
-Y: Y=0 for imm8 or Y=1 for reg
-Z: 3 bit identifier of first register
+X: 4-bit - opcode
+Y: 1-bit - Y=0 for imm8 or Y=1 for reg
+Z: 3-bit - identifier of first register
 
 Instructions can be 1-3 bytes long
 
@@ -35,12 +35,12 @@ Instruction specific continuation formats (second/third byte):
 Format 0:
   * No second bit. Relevant to PUSH, POP, LOD, STO, JNZ.
 Format 1:
-  * A: 3 bit register identifier
+  * A: 3-bit register identifier
   * U: UNUSED
 Format 2:
-  * B: 8 bit immediate
+  * B: 8-bit immediate
 Format 3:
-  * C: 16 bit immediate
+  * C: 16-bit immediate
 
 MOV, ADD, SUB:
   * Y=0: 2
@@ -62,7 +62,7 @@ HLT
 (1) RB :  GP temporary
 (2) RC :  GP counter
 (3) RH :  GP high memory index
-(4) RHL:  GP low memory index
+(4) RL:  GP low memory index
 (5) RF :  Flags
             (LSB to MSB)
             * ZERO
