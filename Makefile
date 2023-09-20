@@ -1,4 +1,4 @@
-CC = gcc
+CC = clang++
 CFLAGS = -Wall -Wextra -I. -g
 
 BIN_DIR = bin
@@ -19,11 +19,9 @@ COMMON_HEADERS = $(wildcard $(COMMON_DIR)/*.h)
 
 .PHONY: emu asm clean
 
-all: emu asm
+all: emu # asm
 
 emu: $(EMU_EXEC)
-
-asm: $(ASM_EXEC)
 
 $(EMU_EXEC): $(EMU_OBJS) $(BIN_DIR)
 	$(CC) $(CFLAGS) -o $@ $(EMU_OBJS)

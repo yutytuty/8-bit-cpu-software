@@ -2,9 +2,9 @@
 =        SPECS        =
 =======================
 
-* 8 bit architecture
-* 8 bit wide instructions with this format
-* 16 bit address memory
+* 8-bit  architecture
+* 8-bit  wide instructions with this format
+* 16-bit address memory
 
 === INSTRUCTION SET ===
 0: MOV  reg, imm8/reg
@@ -33,7 +33,7 @@ Instruction specific continuation formats (second/third byte):
 3: CCCCCCCCCCCCCCCC
 
 Format 0:
-  * No second bit. Relevent to PUSH, POP, LOD, STO, JNZ.
+  * No second bit. Relevant to PUSH, POP, LOD, STO, JNZ.
 Format 1:
   * A: 3 bit register identifier
   * U: UNUSED
