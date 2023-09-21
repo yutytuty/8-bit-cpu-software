@@ -29,18 +29,6 @@ enum Register {
   RF = 0x6,
 };
 
-enum Instruction {
-  MOV = 0x0,
-  ADD = 0x1,
-  SUB = 0x2,
-  PUSH = 0x3,
-  POP = 0x4,
-  LOD = 0x5,
-  STO = 0x6,
-  JNZ = 0x7,
-  HLT = 0xf,
-};
-
 struct CpuState {
   union Registers {
 	struct {
