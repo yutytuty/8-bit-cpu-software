@@ -50,11 +50,11 @@ struct CpuState {
   uint16_t sp = 0;
 };
 
-class Cpu {
+class cpu {
  public:
   CpuState state_;
 
-  explicit Cpu(std::ifstream& file);
+  explicit cpu(std::ifstream& file);
  private:
 };
 
