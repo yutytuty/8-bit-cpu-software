@@ -5,10 +5,13 @@
 #ifndef INC_8_BIT_CPU_EMU_CPU_H_
 #define INC_8_BIT_CPU_EMU_CPU_H_
 
+#include "../common/log.h"
+
 #include <iostream>
 #include <cstdint>
 #include <cstddef>
 #include <cstring>
+#include <fstream>
 
 #define REGISTER_NUM 7
 
@@ -63,7 +66,7 @@ class Cpu {
  public:
   CpuState state_;
 
-  Cpu();
+  explicit Cpu(std::ifstream& file);
  private:
 };
 
