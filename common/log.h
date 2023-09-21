@@ -21,7 +21,7 @@ enum LogLevel {
   NONE = 0, SUCCESS = 1, ERROR = 2, WARN = 3, INFO = 4, DEBUG = 5,
 };
 
-static LogLevel log_level = LogLevel::NONE;
+static LogLevel log_level = LogLevel::ERROR;
 
 constexpr char kLogLevelKey[] = "LOG_LEVEL";
 
