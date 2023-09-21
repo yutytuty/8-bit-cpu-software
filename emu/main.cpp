@@ -2,7 +2,7 @@
 // Created by Yotam Yizhar on 20/09/2023.
 //
 
-#include "Cpu.h"
+#include "cpu.h"
 
 int main(int argc, char *argv[]) {
   InitLogLevel();
@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
   std::ifstream image_file;
   image_file.open(argv[1], std::ios::binary);
 
-  __attribute__((unused)) Cpu cpu(image_file);
+  __attribute__((unused)) cpu cpu(image_file);
 
   return EXIT_SUCCESS;
 }
