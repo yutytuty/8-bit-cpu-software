@@ -48,6 +48,12 @@ struct CpuState {
 
   uint16_t pc = 0;
   uint16_t sp = 0;
+
+  uint8_t Peek(uint16_t addr);
+  void Poke(uint16_t addr, uint8_t val);
+
+  void Push(uint8_t val);
+  uint8_t Pop();
 };
 
 class cpu {
