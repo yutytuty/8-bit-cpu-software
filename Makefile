@@ -35,7 +35,6 @@ $(OBJ_DIR)/%.o: $(EMU_DIR)/%.cpp $(OBJ_DIR) $(COMMON_HEADERS)
 $(OBJ_DIR)/%.o: $(ASM_DIR)/%.cpp $(OBJ_DIR) $(COMMON_HEADERS)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-
 $(OBJ_DIR):
 	mkdir -p $(OBJ_DIR)
 
