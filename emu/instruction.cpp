@@ -4,28 +4,28 @@
 
 #include "instruction.h"
 
-Instruction GetInstructionType(uint8_t byte) {
-  switch (OPCODE(byte)) {
-    case 0x0:
-      return Instruction::MOV;
-    case 0x1:
-      return Instruction::ADD;
-    case 0x2:
-      return Instruction::SUB;
-    case 0x3:
-      return Instruction::PUSH;
-    case 0x4:
-      return Instruction::POP;
-    case 0x5:
-      return Instruction::LOD;
-    case 0x6:
-      return Instruction::STO;
-    case 0x7:
-      return Instruction::JNZ;
-    case 0xF:
-      return Instruction::HLT;
-    default:
-      Error("Unknown instruction");
-      exit(EXIT_FAILURE);
+size_t GetInstructionLength(Instruction inst, bool reg_bit) {
+  switch (inst) {
+    case Instruction::MOV:
+    case Instruction::ADD:
+    case Instruction::SUB: {
+      return 2;
+    }
+    case Instruction::PUSH: {
+      return reg_bit ? 2 : 1;
+    }
+    case Instruction::POP: {
+      return 1;
+    }
+    case Instruction::LOD:
+    case Instruction::STO: {
+      return reg_bit ? 3 : 1;
+    }
+    case Instruction::JNZ: {
+      return 3;
+    }
+    case Instruction::HLT: {
+      return 0;
+    }
   }
 }
