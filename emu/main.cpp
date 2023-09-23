@@ -16,6 +16,7 @@ int main(int argc, char *argv[]) {
   image_file.open(argv[1], std::ios::binary);
 
   Cpu cpu(image_file);
+  cpu.Run();
 
   return EXIT_SUCCESS;
 }

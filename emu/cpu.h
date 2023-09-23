@@ -68,6 +68,11 @@ class Cpu {
   void SimulateInstruction(Instruction opcode, uint8_t imm8);
   void SimulateInstruction(Instruction opcode, Register reg, uint16_t imm16);
   void SimulateInstruction(Instruction opcode, uint16_t imm16);
+
+  void Run();
+ private:
+  // Parses instruction from pointer and returns how much PC needs to be incremented.
+  size_t ParseInstruction(const uint8_t *instruction_start);
 };
 
 #endif //INC_8_BIT_CPU_EMU_CPU_H_

@@ -143,6 +143,73 @@ void Cpu::SimulateInstruction(Instruction opcode, uint16_t imm16) {
   }
 }
 
+size_t Cpu::ParseInstruction(const uint8_t *instruction_start) {
+  switch (OPCODE(*instruction_start)) {
+    case Instruction::MOV:
+    case Instruction::ADD:
+    case Instruction::SUB: {
+      if (REG_BIT(*instruction_start)) {
+        SimulateInstruction((Instruction)OPCODE(*instruction_start),
+                            (Register)REG_1(*instruction_start),
+                            (Register)REG_2(*(instruction_start + 1)));
+        break;
+      }
+
+      SimulateInstruction((Instruction)OPCODE(*instruction_start),
+                          (Register)REG_1(*instruction_start),
+                          (uint8_t)(*(instruction_start + 1)));
+      break;
+    }
+    case Instruction::PUSH: {
+      if (REG_BIT(*instruction_start)) {
+        SimulateInstruction((Instruction)OPCODE(*instruction_start),
+                            (Register)REG_1(*instruction_start));
+        break;
+      }
+      SimulateInstruction((Instruction)OPCODE(*instruction_start),
+                          (uint8_t)(*(instruction_start + 1)));
+      break;
+    }
+    case Instruction::POP: {
+      SimulateInstruction((Instruction)OPCODE(*instruction_start),
+                          (Register)REG_1(*instruction_start));
+      break;
+    }
+    case Instruction::LOD:
+    case Instruction::STO: {
+      if (REG_BIT(*instruction_start)) {
+        // TODO: add support for RHRL
+        break;
+      }
+      SimulateInstruction((Instruction)OPCODE(*instruction_start),
+                          (Register)REG_1(*instruction_start),
+                          (uint16_t)(*(instruction_start + 1)));
+      break;
+    }
+    case Instruction::JNZ: {
+      SimulateInstruction((Instruction)OPCODE(*instruction_start),
+                          (uint16_t)(*(instruction_start + 1)));
+      break;
+    }
+    case Instruction::HLT: {
+      SimulateInstruction((Instruction)OPCODE(*instruction_start));
+      Info("Got HLT. Stopping.");
+      break;
+    }
+    default: {
+      Error("Unknown instruction (0x%01X)\n", OPCODE(*instruction_start));
+      exit(EXIT_FAILURE);
+    }
+  }
+  return GetInstructionLength((Instruction)OPCODE(*instruction_start), REG_BIT(*instruction_start));
+}
+
+void Cpu::Run() {
+  do
+    state_.pc += ParseInstruction(&state_.memory.raw_[state_.pc]);
+  while (running_);
+}
+
 uint8_t CpuState::Pop() {
   return memory.stack_[sp--];
 }
