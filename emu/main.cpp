@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
   std::ifstream image_file;
   image_file.open(argv[1], std::ios::binary);
 
-  __attribute__((unused)) cpu cpu(image_file);
+  Cpu cpu(image_file);
 
   return EXIT_SUCCESS;
 }
