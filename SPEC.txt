@@ -14,7 +14,7 @@
 0x4: POP  reg
 0x5: LOD  reg, [imm16/RHRL]
 0x6: STO  reg, [imm16/RHRL]
-0x7: JNZ imm16/reg
+0x7: JNZ imm16
 0xF: HLT
 
 Instruction format:
