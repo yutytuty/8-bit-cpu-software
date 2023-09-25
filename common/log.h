@@ -21,7 +21,7 @@ enum LogLevel {
   NONE = 0, SUCCESS = 1, ERROR = 2, WARN = 3, INFO = 4, DEBUG = 5,
 };
 
-static LogLevel log_level = LogLevel::ERROR;
+extern LogLevel log_level;
 
 constexpr char kLogLevelKey[] = "LOG_LEVEL";
 
@@ -31,16 +31,26 @@ inline void InitLogLevel() {
     log_level = LogLevel::NONE;
   }
   switch (std::stoi(content)) {
-    case 1:log_level = SUCCESS;
+    case 1: {
+      log_level = SUCCESS;
       break;
-    case 2:log_level = ERROR;
+    }
+    case 2: {
+      log_level = ERROR;
       break;
-    case 3:log_level = WARN;
+    }
+    case 3: {
+      log_level = WARN;
       break;
-    case 4:log_level = INFO;
+    }
+    case 4: {
+      log_level = INFO;
       break;
-    case 5:log_level = DEBUG;
+    }
+    case 5: {
+      log_level = DEBUG;
       break;
+    }
   }
 }
 

@@ -7,36 +7,50 @@ COMMON_DIR = common
 
 EMU_DIR = emu
 EMU_SRCS = $(wildcard $(EMU_DIR)/*.cpp)
-EMU_OBJS = $(patsubst $(EMU_DIR)/%.c,$(OBJ_DIR)/%.o,$(EMU_SRCS))
+EMU_OBJS = $(patsubst $(EMU_DIR)/%.cpp,$(OBJ_DIR)/$(EMU_DIR)/%.o,$(EMU_SRCS))
 EMU_EXEC := $(BIN_DIR)/emu
 
 ASM_DIR = asm
 ASM_SRCS = $(wildcard $(ASM_DIR)/*.cpp)
-ASM_OBJS = $(patsubst $(ASM_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(ASM_SRCS))
+ASM_OBJS = $(patsubst $(ASM_DIR)/%.cpp,$(OBJ_DIR)/$(ASM_DIR)/%.o,$(ASM_SRCS))
 ASM_EXEC := $(BIN_DIR)/asm
 
-COMMON_HEADERS = $(wildcard $(COMMON_DIR)/*.h)
+COMMON_SRCS = $(wildcard $(COMMON_DIR)/*.cpp)
+COMMON_OBJS = $(patsubst $(COMMON_DIR)/%.cpp,$(OBJ_DIR)/$(COMMON_DIR)/%.o,$(COMMON_SRCS))
 
 .PHONY: emu asm clean
 
-all: emu # asm
+all: emu asm
 
 emu: $(EMU_EXEC)
 
-$(EMU_EXEC): $(EMU_OBJS) $(BIN_DIR)
-	$(CC) $(CFLAGS) -o $@ $(EMU_OBJS)
+asm: $(ASM_EXEC)
 
-$(ASM_EXEC): $(ASM_OBJS) $(BIN_DIR)
-	$(CC) $(CFALGS) -o $@ $(ASM_OBJS)
+$(EMU_EXEC): $(EMU_OBJS) $(BIN_DIR) $(COMMON_OBJS)
+	$(CC) $(CFLAGS) -o $@ $(EMU_OBJS) $(COMMON_OBJS)
 
-$(OBJ_DIR)/%.o: $(EMU_DIR)/%.cpp $(OBJ_DIR) $(COMMON_HEADERS)
+$(ASM_EXEC): $(ASM_OBJS) $(BIN_DIR) $(COMMON_OBJS)
+	$(CC) $(CFALGS) -o $@ $(ASM_OBJS) $(COMMON_OBJS)
+
+$(OBJ_DIR)/$(EMU_DIR)/%.o: $(EMU_DIR)/%.cpp $(OBJ_DIR)/$(EMU_DIR) $(COMMON_OBJS)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-$(OBJ_DIR)/%.o: $(ASM_DIR)/%.cpp $(OBJ_DIR) $(COMMON_HEADERS)
+$(OBJ_DIR)/$(ASM_DIR)/%.o: $(ASM_DIR)/%.cpp $(OBJ_DIR)/$(ASM_DIR) $(COMMON_OBJS)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-$(OBJ_DIR):
-	mkdir -p $(OBJ_DIR)
+$(OBJ_DIR)/$(COMMON_DIR)/%.o: $(COMMON_DIR)/%.cpp $(OBJ_DIR)/$(COMMON_DIR)
+	$(CC) $(CFLAGS) -c -o $@ $<
+obj/common/log.o: $(OBJ_DIR)/$(COMMON_DIR)
+	$(CC) $(CFLAGS) -c -o $@ common/log.cpp
+
+$(OBJ_DIR)/$(EMU_DIR):
+	mkdir -p $@
+
+$(OBJ_DIR)/$(ASM_DIR):
+	mkdir -p $@
+
+$(OBJ_DIR)/$(COMMON_DIR):
+	mkdir -p $@
 
 $(BIN_DIR):
 	mkdir -p $(BIN_DIR)
