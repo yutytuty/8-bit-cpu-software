@@ -178,7 +178,9 @@ size_t Cpu::ParseInstruction(const uint8_t *instruction_start) {
     case Instruction::LOD:
     case Instruction::STO: {
       if (REG_BIT(*instruction_start)) {
-        // TODO: add support for RHRL
+        SimulateInstruction((Instruction)OPCODE(*instruction_start),
+                            (Register)REG_1(*instruction_start),
+                            state_.RhRl());
         break;
       }
       SimulateInstruction((Instruction)OPCODE(*instruction_start),
@@ -228,4 +230,7 @@ void CpuState::Poke(uint16_t addr, uint8_t val) {
 
 uint8_t CpuState::Peek(uint16_t addr) {
   return memory.raw_[addr];
+}
+uint16_t CpuState::RhRl() const {
+  return ((registers.rh_ << 8) & registers.rl_);
 }

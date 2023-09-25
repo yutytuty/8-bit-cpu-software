@@ -47,6 +47,8 @@ struct CpuState {
   uint16_t pc = 0;
   uint16_t sp = 0;
 
+  uint16_t RhRl() const;
+
   uint8_t Peek(uint16_t addr);
   void Poke(uint16_t addr, uint8_t val);
 
