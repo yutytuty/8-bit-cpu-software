@@ -83,10 +83,11 @@ class Lexer {
 
   std::ifstream &file_;
   size_t line_num_;
+  uint16_t image_size_;
   std::string line_;
   std::vector<std::string> tokens_;
 
-  std::vector<ParsedLine> parse_lines_;
+  std::vector<ParsedLine> parsed_lines_;
 };
 
 #endif //INC_8_BIT_CPU_ASM_LEX_H_

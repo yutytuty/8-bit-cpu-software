@@ -94,10 +94,6 @@ void Lexer::NextLine() {
   TokenizeLine();
 }
 
-size_t Lexer::GetLineNum() const {
-  return line_num_;
-}
-
 int Lexer::EvaluateConstant(const std::string &token) const {
   std::istringstream iss(token);
   char c;
@@ -202,26 +198,31 @@ void Lexer::ParseLine() {
         Register reg1 = LexRegister(tokens_[1]);
         Register reg2 = LexRegister(tokens_[2]);
         parsed_line.params = std::make_tuple(reg1, reg2);
+        image_size_ += 2;
         break;
       }
       Register reg1 = LexRegister(tokens_[1]);
       uint8_t imm8 = EvaluateConstant(tokens_[2]);
       parsed_line.params = std::make_tuple(reg1, imm8);
+      image_size_ += 2;
       break;
     }
     case Instruction::PUSH: {
       if (is_register_inst) {
         Register reg = LexRegister(tokens_[1]);
         parsed_line.params = reg;
+        image_size_ += 1;
         break;
       }
       uint8_t imm8 = EvaluateConstant(tokens_[2]);
       parsed_line.params = imm8;
+      image_size_ += 2;
       break;
     }
     case Instruction::POP: {
       Register reg = LexRegister(tokens_[1]);
       parsed_line.params = reg;
+      image_size_ += 1;
       break;
     }
     case Instruction::LOD:
@@ -229,11 +230,13 @@ void Lexer::ParseLine() {
       if (is_register_inst) {
         Register reg1 = LexRegister(tokens_[1]);
         parsed_line.params = std::make_tuple(reg1, Register::RHRL);
+        image_size_ += 1; // Load always <REG> into RHRL so the second byte is not used
         break;
       }
       Register reg1 = LexRegister(tokens_[1]);
       uint16_t imm16 = EvaluateConstant(tokens_[2]);
       parsed_line.params = std::make_tuple(reg1, imm16);
+      image_size_ += 3;
       break;
     }
     case Instruction::JNZ: {
@@ -242,13 +245,18 @@ void Lexer::ParseLine() {
       }
       uint16_t imm16 = EvaluateConstant(tokens_[1]);
       parsed_line.params = imm16;
+      image_size_ += 3;
+      break;
+    }
+    case Instruction::HLT: {
+      image_size_ += 1;
       break;
     }
     default: {
       // Some error, should not happen.
     }
   }
-  parse_lines_.push_back(parsed_line);
+  parsed_lines_.push_back(parsed_line);
 }
 
 bool Lexer::GetIsEof() const {
