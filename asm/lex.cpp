@@ -22,45 +22,58 @@ void Lexer::GoToStart() {
 bool Lexer::IsLineEmpty() {
   for (char c : line_) {
     if (c == ';')
-      return false;
-    if ((c != ' ') && (c != '\n'))
       return true;
+    if ((c != ' ') && (c != '\n'))
+      return false;
   }
-  return false;
+  return true;
+}
+
+void Lexer::TokenizeLine() {
+  std::istringstream iss(line_);
+
+  for (std::string token; iss >> token;)
+    tokens_.push_back(token);
 }
 
 Instruction Lexer::GetLineInstruction() {
   // Find start of characters
-  const char* sep = " ";
-  char* line = const_cast<char *>(line_.c_str());
-  while (*line == ' ')
-    line++;
-  char* token = strtok(line, sep);
-  if (token == nullptr) {
+  if (tokens_.empty()) {
     INSTRUCTION_NOT_FOUND_ERROR;
   }
-  if (strcmp(token, "MOV") == 0)
+
+  std::string token = tokens_[0];
+
+  if (token == "MOV")
     return Instruction::MOV;
-  if (strcmp(token, "ADD") == 0)
+  if (token == "ADD")
     return Instruction::ADD;
-  if (strcmp(token, "SUB") == 0)
+  if (token == "SUB")
     return Instruction::SUB;
-  if (strcmp(token, "PUSH") == 0)
+  if (token == "PUSH")
     return Instruction::PUSH;
-  if (strcmp(token, "POP") == 0)
+  if (token == "POP")
     return Instruction::POP;
-  if (strcmp(token, "LOD") == 0)
+  if (token == "LOD")
     return Instruction::LOD;
-  if (strcmp(token, "STO") == 0)
+  if (token == "STO")
     return Instruction::STO;
-  if (strcmp(token, "JNZ") == 0)
+  if (token == "JNZ")
     return Instruction::JNZ;
-  if (strcmp(token, "HLT") == 0)
+  if (token == "HLT")
     return Instruction::HLT;
+
   INSTRUCTION_NOT_FOUND_ERROR;
 }
 
 void Lexer::NextLine() {
-  getline(file_, line_);
-  line_num_++;
+  do {
+    getline(file_, line_);
+    line_num_++;
+  } while (IsLineEmpty());
+  TokenizeLine();
+}
+
+size_t Lexer::GetLineNum() const {
+  return line_num_;
 }

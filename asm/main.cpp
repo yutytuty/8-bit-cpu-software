@@ -17,7 +17,8 @@ int main(int argc, char *argv[]) {
   Lexer lex(file);
   lex.GoToStart();
   lex.NextLine();
-  Info("Instruction at line 2: %s\n",
+  Info("Instruction at line %d: %s\n",
+       lex.GetLineNum(),
        INSTRUCTION_STRING(lex.GetLineInstruction()));
   return EXIT_SUCCESS;
 }

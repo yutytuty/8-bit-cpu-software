@@ -11,10 +11,11 @@
 #include <fstream>
 #include <string>
 #include <regex>
+#include <sstream>
 
 #define START_LABEL "_start:"
 #define INSTRUCTION_NOT_FOUND_ERROR Error("Expected instruction at line %d\n", line_num_); \
-        exit(EXIT_FAILURE);
+        exit(EXIT_FAILURE)
 #define INSTRUCTION_STRING(index) \
         ((index == 0) ? "MOV" : \
         (index == 1) ? "ADD" : \
@@ -39,12 +40,16 @@ class Lexer {
   bool IsLineEmpty();
   Instruction GetLineInstruction();
 
+  void TokenizeLine();
   void NextLine();
+
+  size_t GetLineNum() const;
 
  private:
   std::ifstream &file_;
   size_t line_num_;
   std::string line_;
+  std::vector<std::string> tokens_;
 };
 
 #endif //INC_8_BIT_CPU_ASM_LEX_H_
