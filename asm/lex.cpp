@@ -77,3 +77,57 @@ void Lexer::NextLine() {
 size_t Lexer::GetLineNum() const {
   return line_num_;
 }
+
+int Lexer::ExpandConstant(const std::string &token) const {
+  if (token.rfind(CONSTANT_EXPRESSION_CHAR, 0) != 0) {
+    EXPECTED_CONSTANT_EXPRESSION_ERROR;
+  }
+  std::istringstream iss(token);
+  char c;
+  iss.get(c);
+  if (c == '$') {
+    int character_or_expr = iss.peek();
+    if (character_or_expr == '(') {
+      iss.get(); // take out the '(' character
+
+      int result = 0;
+      char op = '+';
+      while (iss) {
+        int num = 0;
+        if (iss >> num) {
+          if (num < 0)
+            op = '+'; // iss >> num interprets a '-' sign as part of the number;
+          switch (op) {
+            case '+': {
+              result += num;
+              break;
+            }
+            case '*': {
+              result *= num;
+              break;
+            }
+            case '/': {
+              result /= num;
+              break;
+            }
+            default: {
+              Error("Unknown operand at line %d\n", line_num_);
+              exit(EXIT_FAILURE);
+            }
+          }
+        } else {
+          iss.clear(); // clear error flag
+          iss >> op; // read operand
+
+          if (op == ')')
+            return result;
+        }
+      }
+    } else {
+      int num;
+      iss >> num;
+      return num;
+    }
+  }
+  EXPECTED_CONSTANT_EXPRESSION_ERROR;
+}

@@ -16,6 +16,8 @@
 #define START_LABEL "_start:"
 #define INSTRUCTION_NOT_FOUND_ERROR Error("Expected instruction at line %d\n", line_num_); \
         exit(EXIT_FAILURE)
+#define EXPECTED_CONSTANT_EXPRESSION_ERROR Error("Expected constant at line %d\n", line_num_); \
+        exit(EXIT_FAILURE)
 #define INSTRUCTION_STRING(index) \
         ((index == 0) ? "MOV" : \
         (index == 1) ? "ADD" : \
@@ -27,6 +29,8 @@
         (index == 7) ? "JNZ" : \
         (index == 0xF) ? "HLT" : \
         "")
+#define REGISTER_CHAR '%'
+#define CONSTANT_EXPRESSION_CHAR '$'
 
 enum Instruction {
   MOV = 0x0, ADD = 0x1, SUB = 0x2, PUSH = 0x3, POP = 0x4, LOD = 0x5, STO = 0x6, JNZ = 0x7, HLT = 0xF,
@@ -42,6 +46,8 @@ class Lexer {
 
   void TokenizeLine();
   void NextLine();
+
+  int ExpandConstant(const std::string& token) const;
 
   size_t GetLineNum() const;
 
