@@ -18,6 +18,8 @@
         exit(EXIT_FAILURE)
 #define EXPECTED_CONSTANT_EXPRESSION_ERROR Error("Expected constant at line %d\n", line_num_); \
         exit(EXIT_FAILURE)
+#define EXPECTED_REGISTER_ERROR Error("Expected register at line %d\n", line_num_); \
+        exit(EXIT_FAILURE)
 #define INSTRUCTION_STRING(index) \
         ((index == 0) ? "MOV" : \
         (index == 1) ? "ADD" : \
@@ -36,6 +38,10 @@ enum Instruction {
   MOV = 0x0, ADD = 0x1, SUB = 0x2, PUSH = 0x3, POP = 0x4, LOD = 0x5, STO = 0x6, JNZ = 0x7, HLT = 0xF,
 };
 
+enum Register {
+  RA = 0x0, RB = 0x1, RC = 0x3, RD = 0x4, RH = 0x5, RL = 0x6, RF = 0x7,
+};
+
 class Lexer {
  public:
   explicit Lexer(std::ifstream &file);
@@ -47,7 +53,8 @@ class Lexer {
   void TokenizeLine();
   void NextLine();
 
-  int ExpandConstant(const std::string& token) const;
+  Register LexRegister(const std::string &token) const;
+  int EvaluateConstant(const std::string &token) const;
 
   size_t GetLineNum() const;
 

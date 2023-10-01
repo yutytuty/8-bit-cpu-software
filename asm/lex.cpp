@@ -78,14 +78,11 @@ size_t Lexer::GetLineNum() const {
   return line_num_;
 }
 
-int Lexer::ExpandConstant(const std::string &token) const {
-  if (token.rfind(CONSTANT_EXPRESSION_CHAR, 0) != 0) {
-    EXPECTED_CONSTANT_EXPRESSION_ERROR;
-  }
+int Lexer::EvaluateConstant(const std::string &token) const {
   std::istringstream iss(token);
   char c;
   iss.get(c);
-  if (c == '$') {
+  if (c == CONSTANT_EXPRESSION_CHAR) {
     int character_or_expr = iss.peek();
     if (character_or_expr == '(') {
       iss.get(); // take out the '(' character
@@ -130,4 +127,39 @@ int Lexer::ExpandConstant(const std::string &token) const {
     }
   }
   EXPECTED_CONSTANT_EXPRESSION_ERROR;
+}
+
+Register Lexer::LexRegister(const std::string &token) const {
+  std::istringstream iss(token);
+  char c;
+  iss.get(c);
+  if (c != REGISTER_CHAR) {
+    EXPECTED_REGISTER_ERROR;
+  }
+
+  std::string reg_str = iss.str();
+  reg_str.erase(reg_str.begin());
+  if (reg_str == "ra") {
+    return Register::RA;
+  }
+  if (reg_str == "rb") {
+    return Register::RB;
+  }
+  if (reg_str == "rc") {
+    return Register::RC;
+  }
+  if (reg_str == "rd") {
+    return Register::RD;
+  }
+  if (reg_str == "rh") {
+    return Register::RH;
+  }
+  if (reg_str == "rl") {
+    return Register::RL;
+  }
+  if (reg_str == "rf") {
+    return Register::RF;
+  }
+
+  EXPECTED_REGISTER_ERROR;
 }
