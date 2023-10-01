@@ -16,9 +16,13 @@ int main(int argc, char *argv[]) {
   std::ifstream file(argv[1]);
   Lexer lex(file);
   lex.GoToStart();
-  lex.NextLine();
-  Info("Instruction at line %d: %s\n",
-       lex.GetLineNum(),
-       INSTRUCTION_STRING(lex.GetLineInstruction()));
+
+  while (!lex.IsLineEmpty()) {
+    lex.NextLine();
+    if (lex.GetIsEof())
+      break;
+    lex.ParseLine();
+  }
+
   return EXIT_SUCCESS;
 }

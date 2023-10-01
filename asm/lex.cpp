@@ -13,7 +13,7 @@ void Lexer::GoToStart() {
     getline(file_, line_);
     ++line_num_;
     if (line_.rfind(START_LABEL, 0) == 0) {
-      Info("Found '%s'\n", START_LABEL);
+      Info("Found '%s' at line %d\n", START_LABEL, line_num_);
       return;
     }
   }
@@ -29,11 +29,28 @@ bool Lexer::IsLineEmpty() {
   return true;
 }
 
+void Lexer::StripToken(std::string& token) {
+  while (std::isspace(token[0])) {
+    token.erase(token.begin());
+  }
+  if (token[0] == ';') {
+    token.clear();
+  }
+}
+
 void Lexer::TokenizeLine() {
   std::istringstream iss(line_);
-
-  for (std::string token; iss >> token;)
+  std::string token;
+  iss >> token; // Get instruction (seperated by spaces)
+  tokens_.push_back(token);
+  if (iss >> token) { // Get First parameter
+    StripToken(token);
     tokens_.push_back(token);
+  }
+  if (std::getline(iss, token, ',')) {
+    StripToken(token);
+    tokens_.push_back(token); // Get second parameter
+  }
 }
 
 Instruction Lexer::GetLineInstruction() {
@@ -67,7 +84,10 @@ Instruction Lexer::GetLineInstruction() {
 }
 
 void Lexer::NextLine() {
+  tokens_.clear();
   do {
+    if (file_.eof())
+      return;
     getline(file_, line_);
     line_num_++;
   } while (IsLineEmpty());
@@ -139,6 +159,7 @@ Register Lexer::LexRegister(const std::string &token) const {
 
   std::string reg_str = iss.str();
   reg_str.erase(reg_str.begin());
+  reg_str = reg_str.substr(0, 2);
   if (reg_str == "ra") {
     return Register::RA;
   }
@@ -160,6 +181,95 @@ Register Lexer::LexRegister(const std::string &token) const {
   if (reg_str == "rf") {
     return Register::RF;
   }
+  if (reg_str == "rhrl") {
+    return Register::RHRL;
+  }
 
   EXPECTED_REGISTER_ERROR;
+}
+
+void Lexer::ParseLine() {
+  Instruction inst = GetLineInstruction();
+  bool is_register_inst = IsRegInstruction();
+  ParsedLine parsed_line = {};
+  parsed_line.instruction = inst;
+  Info("Line %d instruction: %s.\n", line_num_, INSTRUCTION_STRING(inst));
+  switch (inst) {
+    case Instruction::MOV:
+    case Instruction::ADD:
+    case Instruction::SUB: {
+      if (is_register_inst) {
+        Register reg1 = LexRegister(tokens_[1]);
+        Register reg2 = LexRegister(tokens_[2]);
+        parsed_line.params = std::make_tuple(reg1, reg2);
+        break;
+      }
+      Register reg1 = LexRegister(tokens_[1]);
+      uint8_t imm8 = EvaluateConstant(tokens_[2]);
+      parsed_line.params = std::make_tuple(reg1, imm8);
+      break;
+    }
+    case Instruction::PUSH: {
+      if (is_register_inst) {
+        Register reg = LexRegister(tokens_[1]);
+        parsed_line.params = reg;
+        break;
+      }
+      uint8_t imm8 = EvaluateConstant(tokens_[2]);
+      parsed_line.params = imm8;
+      break;
+    }
+    case Instruction::POP: {
+      Register reg = LexRegister(tokens_[1]);
+      parsed_line.params = reg;
+      break;
+    }
+    case Instruction::LOD:
+    case Instruction::STO: {
+      if (is_register_inst) {
+        Register reg1 = LexRegister(tokens_[1]);
+        parsed_line.params = std::make_tuple(reg1, Register::RHRL);
+        break;
+      }
+      Register reg1 = LexRegister(tokens_[1]);
+      uint16_t imm16 = EvaluateConstant(tokens_[2]);
+      parsed_line.params = std::make_tuple(reg1, imm16);
+      break;
+    }
+    case Instruction::JNZ: {
+      if (is_register_inst) {
+        // Error
+      }
+      uint16_t imm16 = EvaluateConstant(tokens_[1]);
+      parsed_line.params = imm16;
+      break;
+    }
+    default: {
+      // Some error, should not happen.
+    }
+  }
+  parse_lines_.push_back(parsed_line);
+}
+
+bool Lexer::GetIsEof() const {
+  return file_.eof();
+}
+
+bool Lexer::IsRegInstruction() {
+  std::string param;
+  if (tokens_.size() == 3)
+    param = tokens_[2];
+  else if (tokens_.size() == 2)
+    param = tokens_[1];
+  else if (tokens_.size() == 1)
+    return false;
+  else {
+    Error("Expected at least one parameter and no more that 2 for instruction at line %d\n", line_num_);
+    exit(EXIT_FAILURE);
+  }
+
+  if (param[0] != REGISTER_CHAR && param[0] != CONSTANT_EXPRESSION_CHAR) {
+    EXPECTED_REGISTER_OR_CONSTANT_ERROR;
+  }
+  return param[0] == REGISTER_CHAR;
 }
